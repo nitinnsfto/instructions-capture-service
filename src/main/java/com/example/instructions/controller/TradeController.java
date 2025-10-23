@@ -24,6 +24,7 @@ public class TradeController {
 	@PostMapping("/uploadTrades")
 	public String upload(@RequestBody List<CanonicalTrade> trades) {
 		logger.info("Received paylod with trades as: "+ trades.size());
+		trades.stream().forEach(x -> logger.info(x.toString()));
 		return tradeService.upload(trades);
 	}
 }
