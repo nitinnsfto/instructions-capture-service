@@ -6,9 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.stereotype.Component;
 
 import com.example.instructions.model.PlatformTrade;
 
+@Component
 public class KafkaPublisher {
 	
 	public static final String KAFKA_TOPIC="instructions.outbound";

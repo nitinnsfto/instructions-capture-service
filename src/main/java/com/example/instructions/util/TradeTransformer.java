@@ -3,9 +3,12 @@ package com.example.instructions.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.example.instructions.model.CanonicalTrade;
 import com.example.instructions.model.PlatformTrade;
 
+@Component
 public class TradeTransformer {
 
 	public List<PlatformTrade> normalize(List<CanonicalTrade> trades) {

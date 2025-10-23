@@ -4,6 +4,12 @@ import java.sql.Timestamp;
 
 public class CanonicalTrade{
 
+	@Override
+	public String toString() {
+		return "CanonicalTrade [account=" + account + ", security=" + security + ", type=" + type + ", amount=" + amount
+				+ ", timstamp=" + timstamp + "]";
+	}
+
 	public String getAccount() {
 		return account;
 	}
