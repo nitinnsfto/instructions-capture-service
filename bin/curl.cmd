@@ -1,1 +1,1 @@
-curl -X POST -H "Content-Type: application/json" --data-binary "@src/test/resources/canonical_trades.json" http://localhost:8080/uploadTrades
+curl -X POST -H "Content-Type: application/json" --data-binary "@src/test/resources/canonical_trades.json" http://localhost:8081/uploadTrades
