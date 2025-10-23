@@ -14,29 +14,40 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
 
 @Service
 public class KafkaListenerService{
 	
-    public static void main(String[] args) {
+	   Logger logger = LoggerFactory.getLogger(KafkaListenerService.class);
+	   
+	   public static final String CONSUMER_GROUP = "";
+	   public static final String TRANSACTIONAL_ID = "";
+	   public static final String KAFKA_TOPIC = "";
+	   
+	
+    public static void listen(String[] args) {
         // Consumer and Producer properties (as defined above)
         Properties consumerProps = new Properties();
         consumerProps.setProperty("bootstrap.servers", "localhost:9092");
-        consumerProps.setProperty("group.id", "my-group");
+        consumerProps.setProperty("group.id", CONSUMER_GROUP);
         consumerProps.setProperty("enable.auto.commit", "false");
         consumerProps.setProperty("isolation.level", "read_committed");
 
         Properties producerProps = new Properties();
         producerProps.setProperty("bootstrap.servers", "localhost:9092");
         producerProps.setProperty("enable.idempotence", "true");
-        producerProps.setProperty("transactional.id", "my-transactional-producer");
+        producerProps.setProperty("transactional.id", TRANSACTIONAL_ID);
         producerProps.setProperty("acks", "all");
 
         try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProps);
              KafkaProducer<String, String> producer = new KafkaProducer<>(producerProps)) {
 
-            consumer.subscribe(Collections.singletonList("input-topic"));
+            consumer.subscribe(Collections.singletonList(KAFKA_TOPIC));
             producer.initTransactions();
 
             while (true) {
