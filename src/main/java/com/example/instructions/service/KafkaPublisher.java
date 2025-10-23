@@ -27,11 +27,11 @@ public class KafkaPublisher {
 	private String BOOTSTRAP_SERVERS;
 	
 	
-	ConcurrentHashMap map = new ConcurrentHashMap();
+	ConcurrentHashMap<String, String> map = new ConcurrentHashMap();
 
 	public void publish(List<PlatformTrade> trades) throws Exception {
 			
-			simpleSend(trades);
+			//simpleSend(trades);
 
 	        Properties props = new Properties();
 	        props.put("bootstrap.servers", BOOTSTRAP_SERVERS); 

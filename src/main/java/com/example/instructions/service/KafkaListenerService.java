@@ -16,6 +16,8 @@ import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 
@@ -25,21 +27,31 @@ public class KafkaListenerService{
 	
 	   Logger logger = LoggerFactory.getLogger(KafkaListenerService.class);
 	   
+		   
+		@Value("${com.example.instructions.kafka.inbound}")
+		private String KAFKA_TOPIC;
+		
+		@Value("${com.example.instructions.kafka.outbound}")
+		private String OUTBOUND_KAFKA_TOPIC;
+		
+		@Value("${com.example.instructions.kafka.bootstrap.servers}")
+		private String BOOTSTRAP_SERVERS;
+		
+	   
 	   public static final String CONSUMER_GROUP = "";
 	   public static final String TRANSACTIONAL_ID = "";
-	   public static final String KAFKA_TOPIC = "";
 	   
-	
-    public static void listen(String[] args) {
+	@Async
+    public void listen(String[] args) {
         // Consumer and Producer properties (as defined above)
         Properties consumerProps = new Properties();
-        consumerProps.setProperty("bootstrap.servers", "localhost:9092");
+        consumerProps.setProperty("bootstrap.servers", BOOTSTRAP_SERVERS);
         consumerProps.setProperty("group.id", CONSUMER_GROUP);
         consumerProps.setProperty("enable.auto.commit", "false");
         consumerProps.setProperty("isolation.level", "read_committed");
 
         Properties producerProps = new Properties();
-        producerProps.setProperty("bootstrap.servers", "localhost:9092");
+        producerProps.setProperty("bootstrap.servers", BOOTSTRAP_SERVERS);
         producerProps.setProperty("enable.idempotence", "true");
         producerProps.setProperty("transactional.id", TRANSACTIONAL_ID);
         producerProps.setProperty("acks", "all");
@@ -58,11 +70,11 @@ public class KafkaListenerService{
                     try {
                         for (ConsumerRecord<String, String> record : records) {
                             // 1. Process the message (e.g., transform, store in database)
-                            System.out.printf("Processing record: offset = %d, key = %s, value = %s%n",
+                            logger.info("Processing record: offset = %d, key = %s, value = %s%n",
                                     record.offset(), record.key(), record.value());
 
                             // 2. Produce output messages (if applicable)
-                            producer.send(new ProducerRecord<>("output-topic", record.key(), "Processed: " + record.value()));
+                            producer.send(new ProducerRecord<>(OUTBOUND_KAFKA_TOPIC, record.key(), "Processed: " + record.value()));
                         }
 
                         // 3. Commit consumer offsets within the same transaction
@@ -77,7 +89,7 @@ public class KafkaListenerService{
                         producer.commitTransaction();
                     } catch (KafkaException e) {
                         // Handle transactional errors (e.g., ProducerFencedException)
-                        System.err.println("Transaction failed, aborting: " + e.getMessage());
+                        logger.error("Transaction failed, aborting: " + e.getMessage());
                         producer.abortTransaction();
                     }
                 }
