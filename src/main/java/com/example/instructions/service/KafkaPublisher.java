@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.example.instructions.model.PlatformTrade;
@@ -13,14 +14,19 @@ import com.example.instructions.model.PlatformTrade;
 @Component
 public class KafkaPublisher {
 	
-	public static final String KAFKA_TOPIC="instructions.outbound";
+	@Value("${com.example.instructions.kafka.outbound}")
+	private String KAFKA_TOPIC;
+	
+	@Value("${com.example.instructions.kafka.bootstrap.servers}")
+	private String BOOTSTRAP_SERVERS;
+	
 	
 	ConcurrentHashMap map = new ConcurrentHashMap();
 
 	public void publish(List<PlatformTrade> trades) throws Exception {
 
 	        Properties props = new Properties();
-	        props.put("bootstrap.servers", "localhost:9092"); 
+	        props.put("bootstrap.servers", BOOTSTRAP_SERVERS); 
 	        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 	        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
