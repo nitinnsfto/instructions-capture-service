@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class TradeController {
 	  
-	Logger logger = LoggerFactory.getLogger(KafkaListenerService.class);
+	Logger logger = LoggerFactory.getLogger(TradeController.class);
 	
 	@Autowired
 	TradeService tradeService;

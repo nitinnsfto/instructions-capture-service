@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import com.example.instructions.model.PlatformTrade;
 @Component
 public class KafkaPublisher {
 	
+	Logger logger = LoggerFactory.getLogger(KafkaPublisher.class);
+	   
 	@Value("${com.example.instructions.kafka.outbound}")
 	private String KAFKA_TOPIC;
 	
@@ -41,6 +45,9 @@ public class KafkaPublisher {
 	            for (int i = 0; i < trades.size(); i++) {
 	                String key = "key-" + i;
 	                String value = trades.get(i).toString();
+	                
+	                logger.info(value + " " + KAFKA_TOPIC + " " + BOOTSTRAP_SERVERS);
+	                
 	                ProducerRecord<String, String> record = new ProducerRecord<>(KAFKA_TOPIC, key, value);
 	                map.put(key, value);
 	                producer.send(record, (metadata, exception) -> {
