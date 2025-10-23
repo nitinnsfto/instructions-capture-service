@@ -1,5 +1,13 @@
 package com.example.instructions.controller;
 
-public interface TradeController {
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+public class TradeController {
+
+	@PostMapping("/uploadTrades")
+	public void upload() {
+		
+	}
 }
