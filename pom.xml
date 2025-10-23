@@ -34,5 +34,12 @@
   <artifactId>mockito-core</artifactId>
   <scope>test</scope>
 </dependency>
+
+    <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+        <version>3.7.0</version> <!-- Replace with the desired Kafka client version -->
+    </dependency>
+    
 </dependencies>
 </project>
