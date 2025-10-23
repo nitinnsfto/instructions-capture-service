@@ -23,7 +23,7 @@ public class TradeController {
 
 	@PostMapping("/uploadTrades")
 	public String upload(@RequestBody List<CanonicalTrade> trades) {
-		logger.info("Recived paylod with trades as: "+ trades.size());
+		logger.info("Received paylod with trades as: "+ trades.size());
 		return tradeService.upload(trades);
 	}
 }
