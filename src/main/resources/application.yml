@@ -9,3 +9,4 @@ com:
        bootstrap:
          servers: localhost:9092
        inbound: instructions.inbound
+       transid: trans_1

@@ -6,19 +6,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import org.apache.kafka.common.serialization.StringSerializer;
 
 
 
@@ -39,22 +44,29 @@ public class KafkaListenerService{
 		
 	   
 	   public static final String CONSUMER_GROUP = "";
-	   public static final String TRANSACTIONAL_ID = "";
+		
+	   @Value("${com.example.instructions.kafka.transid}")
+	   private String TRANSACTIONAL_ID;
 	   
-	@Async
-    public void listen(String[] args) {
+	//@Async
+    public void listen() {
+		logger.info("Starting Kafka Listener ");
         // Consumer and Producer properties (as defined above)
         Properties consumerProps = new Properties();
         consumerProps.setProperty("bootstrap.servers", BOOTSTRAP_SERVERS);
         consumerProps.setProperty("group.id", CONSUMER_GROUP);
         consumerProps.setProperty("enable.auto.commit", "false");
         consumerProps.setProperty("isolation.level", "read_committed");
+        consumerProps.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        consumerProps.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
         Properties producerProps = new Properties();
         producerProps.setProperty("bootstrap.servers", BOOTSTRAP_SERVERS);
         producerProps.setProperty("enable.idempotence", "true");
         producerProps.setProperty("transactional.id", TRANSACTIONAL_ID);
         producerProps.setProperty("acks", "all");
+        producerProps.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        producerProps.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProps);
              KafkaProducer<String, String> producer = new KafkaProducer<>(producerProps)) {
@@ -95,7 +107,8 @@ public class KafkaListenerService{
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error in Kafka listener: " + e.getMessage());
+        	e.printStackTrace();
+           logger.error("Error in Kafka listener: " + e.getMessage());
         }
     }
 }
